@@ -119,6 +119,17 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     @Override
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_app, parent, false);
+        // 180dp tiles fit four columns; with more, shrink them (keeping 16:9) so the focus scale still fits.
+        int fit = parent.getMeasuredWidth() / dockSize * 85 / 100;
+        ViewGroup.LayoutParams card = v.findViewById(R.id.card).getLayoutParams();
+        if (fit > 0 && fit < card.width) {
+            ViewGroup.MarginLayoutParams name = (ViewGroup.MarginLayoutParams) v.findViewById(R.id.name).getLayoutParams();
+            int gap = name.topMargin - card.height;
+            card.height = card.height * fit / card.width;
+            card.width = fit;
+            name.width = fit;
+            name.topMargin = card.height + gap;
+        }
         return new Holder(v, listener);
     }
 
